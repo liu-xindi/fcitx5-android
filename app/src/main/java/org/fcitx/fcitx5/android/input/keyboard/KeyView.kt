@@ -281,13 +281,13 @@ open class TextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.Text) 
 @SuppressLint("ViewConstructor")
 class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText) :
     TextKeyView(ctx, theme, def) {
-    val altText = view(::AutoScaleTextView) {
+    private fun createAltTextView(content: String) = view(::AutoScaleTextView) {
         isClickable = false
         isFocusable = false
         // TODO hardcoded alt text size
         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.666667f)
         setTypeface(typeface, Typeface.BOLD)
-        text = def.altText
+        text = content
         textDirection = View.TEXT_DIRECTION_FIRST_STRONG_LTR
         setTextColor(
             when (def.variant) {
@@ -297,9 +297,14 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
         )
     }
 
+    val altText = createAltTextView(def.altText)
+
+    val oppositeAltText = def.oppositeAltText?.let { createAltTextView(it) }
+
     init {
         appearanceView.apply {
             add(altText, lParams(wrapContent, wrapContent))
+            oppositeAltText?.let { add(it, lParams(wrapContent, wrapContent)) }
         }
         applyLayout(resources.configuration.orientation)
     }
@@ -309,6 +314,7 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             // reset
             topMargin = 0
             bottomToTop = unset
+            topToBottom = unset
             // set
             topToTop = parentId
             bottomToBottom = parentId
@@ -322,6 +328,16 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             leftToLeft = unset
             rightToRight = parentId; rightMargin = hMargin + dp(4)
         }
+        oppositeAltText?.apply {
+            visibility = View.VISIBLE
+            updateLayoutParams<ConstraintLayout.LayoutParams> {
+                // reset
+                rightToRight = unset; rightMargin = 0
+                // set
+                topToTop = parentId; topMargin = vMargin
+                leftToLeft = parentId; leftMargin = hMargin + dp(4)
+            }
+        }
     }
 
     private fun applyBottomAltTextPosition() {
@@ -329,7 +345,12 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             // reset
             bottomToBottom = unset
             // set
-            topToTop = parentId; topMargin = vMargin
+            if (oppositeAltText != null) {
+                topToTop = unset; topMargin = 0
+                topToBottom = oppositeAltText.existingOrNewId
+            } else {
+                topToTop = parentId; topMargin = vMargin
+            }
             bottomToTop = altText.existingOrNewId
         }
         altText.visibility = View.VISIBLE
@@ -342,6 +363,17 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             rightToRight = parentId
             bottomToBottom = parentId; bottomMargin = vMargin + dp(2)
         }
+        oppositeAltText?.apply {
+            visibility = View.VISIBLE
+            updateLayoutParams<ConstraintLayout.LayoutParams> {
+                // reset
+                leftMargin = 0
+                // set
+                leftToLeft = parentId
+                rightToRight = parentId
+                topToTop = parentId; topMargin = vMargin + dp(2)
+            }
+        }
     }
 
     private fun applyNoAltTextPosition() {
@@ -349,11 +381,13 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             // reset
             topMargin = 0
             bottomToTop = unset
+            topToBottom = unset
             // set
             topToTop = parentId
             bottomToBottom = parentId
         }
         altText.visibility = View.GONE
+        oppositeAltText?.visibility = View.GONE
     }
 
     private fun applyLayout(orientation: Int) {

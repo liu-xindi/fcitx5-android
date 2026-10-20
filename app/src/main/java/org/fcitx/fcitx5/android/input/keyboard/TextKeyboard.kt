@@ -32,16 +32,16 @@ class TextKeyboard(
 
         val Layout: List<List<KeyDef>> = listOf(
             listOf(
-                AlphabetKey("Q", "1"),
-                AlphabetKey("W", "2"),
-                AlphabetKey("E", "3"),
-                AlphabetKey("R", "4"),
-                AlphabetKey("T", "5"),
-                AlphabetKey("Y", "6"),
-                AlphabetKey("U", "7"),
-                AlphabetKey("I", "8"),
-                AlphabetKey("O", "9"),
-                AlphabetKey("P", "0")
+                AlphabetSymbolDigitKey("Q", "[", "1"),
+                AlphabetSymbolDigitKey("W", "]", "2"),
+                AlphabetSymbolDigitKey("E", "{", "3"),
+                AlphabetSymbolDigitKey("R", "}", "4"),
+                AlphabetSymbolDigitKey("T", "<", "5"),
+                AlphabetSymbolDigitKey("Y", ">", "6"),
+                AlphabetSymbolDigitKey("U", "|", "7"),
+                AlphabetSymbolDigitKey("I", "&", "8"),
+                AlphabetSymbolDigitKey("O", ";", "9"),
+                AlphabetSymbolDigitKey("P", "_", "0")
             ),
             listOf(
                 AlphabetKey("A", "@"),
@@ -70,7 +70,7 @@ class TextKeyboard(
                 CommaKey(0.1f, KeyDef.Appearance.Variant.Alternative),
                 LanguageKey(),
                 SpaceKey(),
-                SymbolKey(".", 0.1f, KeyDef.Appearance.Variant.Alternative),
+                AltSymbolKey(".", "$", 0.1f, KeyDef.Appearance.Variant.Alternative),
                 ReturnKey()
             )
         )
@@ -248,6 +248,9 @@ class TextKeyboard(
             if (it is AltTextKeyView) {
                 it.def as KeyDef.Appearance.AltText
                 it.altText.text = transformPunctuation(it.def.altText)
+                if (!it.def.displayText[0].isLetter()) {
+                    it.mainText.text = transformPunctuation(it.def.displayText)
+                }
             } else {
                 it.def as KeyDef.Appearance.Text
                 it.mainText.text = it.def.displayText.let { str ->

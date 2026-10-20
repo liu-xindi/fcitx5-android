@@ -61,6 +61,54 @@ class AlphabetKey(
     )
 )
 
+class AlphabetSymbolDigitKey(
+    val character: String,
+    val symbol: String,
+    val digit: String,
+    variant: Variant = Variant.Normal,
+    popup: Array<Popup>? = null
+) : KeyDef(
+    Appearance.AltText(
+        displayText = character,
+        altText = symbol,
+        textSize = 23f,
+        oppositeAltText = digit,
+        variant = variant
+    ),
+    setOf(
+        Behavior.Press(KeyAction.FcitxKeyAction(character)),
+        Behavior.Swipe(KeyAction.FcitxKeyAction(symbol)),
+        Behavior.SwipeOpposite(KeyAction.FcitxKeyAction(digit))
+    ),
+    popup ?: arrayOf(
+        Popup.AltPreview(character, symbol, digit),
+        Popup.Keyboard.Preset(character)
+    )
+)
+
+class AltSymbolKey(
+    val symbol: String,
+    val alternative: String,
+    percentWidth: Float = 0.1f,
+    variant: Variant = Variant.Normal
+) : KeyDef(
+    Appearance.AltText(
+        displayText = symbol,
+        altText = alternative,
+        textSize = 23f,
+        percentWidth = percentWidth,
+        variant = variant
+    ),
+    setOf(
+        Behavior.Press(KeyAction.FcitxKeyAction(symbol)),
+        Behavior.Swipe(KeyAction.FcitxKeyAction(alternative))
+    ),
+    arrayOf(
+        Popup.AltPreview(symbol, alternative),
+        Popup.Keyboard.Preset(symbol)
+    )
+)
+
 class AlphabetDigitKey(
     val character: String,
     altText: String,

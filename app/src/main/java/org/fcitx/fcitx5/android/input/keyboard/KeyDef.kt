@@ -49,6 +49,7 @@ open class KeyDef(
             displayText: String,
             val altText: String,
             textSize: Float,
+            val oppositeAltText: String? = null,
             /**
              * `Int` constants in [Typeface].
              * Can be `NORMAL`(default), `BOLD`, `ITALIC` or `BOLD_ITALIC`
@@ -107,6 +108,10 @@ open class KeyDef(
             val action: KeyAction
         ) : Behavior()
 
+        class SwipeOpposite(
+            val action: KeyAction
+        ) : Behavior()
+
         class DoubleTap(
             val action: KeyAction
         ) : Behavior()
@@ -115,7 +120,11 @@ open class KeyDef(
     sealed class Popup {
         open class Preview(val content: String) : Popup()
 
-        class AltPreview(content: String, val alternative: String) : Preview(content)
+        class AltPreview(
+            content: String,
+            val alternative: String,
+            val oppositeAlternative: String? = null
+        ) : Preview(content)
 
         sealed class Keyboard : Popup() {
             data class Preset(val label: String, val transformPunctuation: Boolean = true) :

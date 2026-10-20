@@ -244,6 +244,25 @@ abstract class BaseKeyboard(
                             } || oldOnGestureListener.onGesture(view, event)
                         }
                     }
+                    is KeyDef.Behavior.SwipeOpposite -> {
+                        swipeEnabled = true
+                        swipeThresholdX = disabledSwipeThreshold
+                        swipeThresholdY = inputSwipeThreshold
+                        val oldOnGestureListener = onGestureListener ?: OnGestureListener.Empty
+                        onGestureListener = OnGestureListener { view, event ->
+                            when (event.type) {
+                                GestureType.Up -> {
+                                    if (!event.consumed && swipeSymbolDirection.checkOppositeY(event.totalY)) {
+                                        onAction(it.action)
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                }
+                                else -> false
+                            } || oldOnGestureListener.onGesture(view, event)
+                        }
+                    }
                     is KeyDef.Behavior.DoubleTap -> {
                         doubleTapEnabled = true
                         onDoubleTapListener = { _ ->
@@ -309,8 +328,13 @@ abstract class BaseKeyboard(
                                         PopupAction.PreviewAction(view.id, it.content, view.bounds)
                                     )
                                     GestureType.Move -> {
-                                        val triggered = swipeSymbolDirection.checkY(event.totalY)
-                                        val text = if (triggered) it.alternative else it.content
+                                        val text = when {
+                                            swipeSymbolDirection.checkY(event.totalY) -> it.alternative
+                                            it.oppositeAlternative != null &&
+                                                    swipeSymbolDirection.checkOppositeY(event.totalY) ->
+                                                it.oppositeAlternative
+                                            else -> it.content
+                                        }
                                         onPopupAction(
                                             PopupAction.PreviewUpdateAction(view.id, text)
                                         )

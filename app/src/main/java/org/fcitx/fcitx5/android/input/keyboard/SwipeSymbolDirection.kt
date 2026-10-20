@@ -14,4 +14,7 @@ enum class SwipeSymbolDirection(override val stringRes: Int): ManagedPreferenceE
 
     fun checkY(totalY: Int): Boolean =
         (this != Disabled) && (totalY != 0) && ((totalY > 0) == (this == Down))
+
+    fun checkOppositeY(totalY: Int): Boolean =
+        (this != Disabled) && (totalY != 0) && ((totalY > 0) != (this == Down))
 }
