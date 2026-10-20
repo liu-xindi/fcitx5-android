@@ -2,6 +2,16 @@
 
 [Fcitx5](https://github.com/fcitx/fcitx5) input method framework and engines ported to Android.
 
+## 关于 fork
+
+基于 [fcitx5-android](https://github.com/fcitx5-android/fcitx5-android) 0.1.3，修改了键盘布局和包名。
+
+- 第一行 q–p：按设置的划动方向输出 `[ ] { } < > | & ; _`，反方向输出数字 1–0。
+- 句号键：划动输出 `$`。
+- 长按菜单：q–p 加入对应符号，h 加 `%`，s 加 `^`。
+- 包名：`com.liuxindi.fcitx5`，可与官方版共存，官方版的备份不能直接导入。
+- 插件：官方插件按官方包名查找主程序，无法使用（其中剪贴板过滤插件还要求签名一致）。使用官方插件需要修改包名自行编译。
+
 ## Download
 
 [<img src="https://github.com/rubenpgrady/get-it-on-github/raw/refs/heads/main/get-it-on-github.png" alt="Git it on GitHub" width="207" height="80">](https://github.com/fcitx5-android/fcitx5-android/releases/latest)
