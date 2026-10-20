@@ -332,10 +332,11 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             visibility = View.VISIBLE
             updateLayoutParams<ConstraintLayout.LayoutParams> {
                 // reset
-                rightToRight = unset; rightMargin = 0
+                topToTop = unset; topMargin = 0
+                leftToLeft = unset
                 // set
-                topToTop = parentId; topMargin = vMargin
-                leftToLeft = parentId; leftMargin = hMargin + dp(4)
+                bottomToBottom = parentId; bottomMargin = vMargin
+                rightToRight = parentId; rightMargin = hMargin + dp(4)
             }
         }
     }
@@ -367,7 +368,8 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             visibility = View.VISIBLE
             updateLayoutParams<ConstraintLayout.LayoutParams> {
                 // reset
-                leftMargin = 0
+                bottomToBottom = unset; bottomMargin = 0
+                rightMargin = 0
                 // set
                 leftToLeft = parentId
                 rightToRight = parentId
