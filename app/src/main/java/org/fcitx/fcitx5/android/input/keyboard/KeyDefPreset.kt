@@ -146,12 +146,14 @@ class CapsKey : KeyDef(
         src = R.drawable.ic_capslock_none,
         viewId = R.id.button_caps,
         percentWidth = 0.15f,
-        variant = Variant.Alternative
+        variant = Variant.Alternative,
+        altText = "⇥"
     ),
     setOf(
         Behavior.Press(KeyAction.CapsAction(false)),
         Behavior.LongPress(KeyAction.CapsAction(true)),
-        Behavior.DoubleTap(KeyAction.CapsAction(true))
+        Behavior.DoubleTap(KeyAction.CapsAction(true)),
+        Behavior.Swipe(KeyAction.CommitAction("    "))
     )
 )
 

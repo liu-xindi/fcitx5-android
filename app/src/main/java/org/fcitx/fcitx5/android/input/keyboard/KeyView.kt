@@ -416,12 +416,69 @@ class ImageKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.Image) :
     KeyView(ctx, theme, def) {
     val img = imageView { configure(theme, def.src, def.variant) }
 
+    val altText = def.altText?.let {
+        view(::AutoScaleTextView) {
+            isClickable = false
+            isFocusable = false
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.666667f)
+            setTypeface(typeface, Typeface.BOLD)
+            text = it
+            setTextColor(
+                when (def.variant) {
+                    Variant.Normal, Variant.AltForeground, Variant.Alternative -> theme.altKeyTextColor
+                    Variant.Accent -> theme.accentKeyTextColor
+                }
+            )
+        }
+    }
+
     init {
         appearanceView.apply {
             add(img, lParams(wrapContent, wrapContent) {
                 centerInParent()
             })
+            altText?.let { add(it, lParams(wrapContent, wrapContent)) }
         }
+        if (altText != null) applyAltTextLayout(resources.configuration.orientation)
+    }
+
+    private fun applyAltTextLayout(orientation: Int) {
+        val altText = altText ?: return
+        val position = ThemeManager.prefs.punctuationPosition.getValue()
+        if (position == PunctuationPosition.None) {
+            altText.visibility = View.GONE
+            return
+        }
+        altText.visibility = View.VISIBLE
+        val bottom = position == PunctuationPosition.Bottom &&
+                orientation != Configuration.ORIENTATION_LANDSCAPE
+        img.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            if (bottom) {
+                bottomToBottom = unset
+                bottomToTop = altText.existingOrNewId
+            } else {
+                bottomToTop = unset
+                bottomToBottom = parentId
+            }
+        }
+        altText.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            if (bottom) {
+                topToTop = unset; topMargin = 0
+                rightMargin = 0
+                leftToLeft = parentId
+                rightToRight = parentId
+                bottomToBottom = parentId; bottomMargin = vMargin + dp(2)
+            } else {
+                bottomToBottom = unset; bottomMargin = 0
+                leftToLeft = unset
+                topToTop = parentId; topMargin = vMargin
+                rightToRight = parentId; rightMargin = hMargin + dp(4)
+            }
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        if (altText != null) applyAltTextLayout(newConfig.orientation)
     }
 }
 

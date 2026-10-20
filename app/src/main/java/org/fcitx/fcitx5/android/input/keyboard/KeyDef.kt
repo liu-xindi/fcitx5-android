@@ -70,7 +70,8 @@ open class KeyDef(
             border: Border = Border.Default,
             margin: Boolean = true,
             viewId: Int = -1,
-            soundEffect: InputFeedbacks.SoundEffect = InputFeedbacks.SoundEffect.Standard
+            soundEffect: InputFeedbacks.SoundEffect = InputFeedbacks.SoundEffect.Standard,
+            val altText: String? = null
         ) : Appearance(percentWidth, variant, border, margin, viewId, soundEffect)
 
         class ImageText(
