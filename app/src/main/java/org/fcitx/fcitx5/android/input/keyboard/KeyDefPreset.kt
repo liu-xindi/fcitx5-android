@@ -43,20 +43,24 @@ class AlphabetKey(
     val character: String,
     val punctuation: String,
     variant: Variant = Variant.Normal,
-    popup: Array<Popup>? = null
+    popup: Array<Popup>? = null,
+    oppositeAction: KeyAction? = null,
+    oppositeText: String? = null
 ) : KeyDef(
     Appearance.AltText(
         displayText = character,
         altText = punctuation,
         textSize = 23f,
+        oppositeAltText = oppositeText,
         variant = variant
     ),
-    setOf(
+    setOfNotNull(
         Behavior.Press(KeyAction.FcitxKeyAction(character)),
-        Behavior.Swipe(KeyAction.FcitxKeyAction(punctuation))
+        Behavior.Swipe(KeyAction.FcitxKeyAction(punctuation)),
+        oppositeAction?.let { Behavior.SwipeOpposite(it) }
     ),
     popup ?: arrayOf(
-        Popup.AltPreview(character, punctuation),
+        Popup.AltPreview(character, punctuation, oppositeText),
         Popup.Keyboard.Preset(character)
     )
 )

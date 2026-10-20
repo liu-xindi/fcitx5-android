@@ -173,6 +173,21 @@ abstract class KeyView(ctx: Context, val theme: Theme, val def: KeyDef.Appearanc
         }
     }
 
+    private var highlighted = false
+    private var normalBackground: Drawable? = null
+
+    open fun setHighlighted(highlighted: Boolean) {
+        if (this.highlighted == highlighted) return
+        this.highlighted = highlighted
+        if (highlighted) {
+            normalBackground = appearanceView.background
+            appearanceView.background = highlightMaskDrawable(theme.genericActiveBackgroundColor)
+        } else {
+            appearanceView.background = normalBackground
+            normalBackground = null
+        }
+    }
+
     private fun highlightMaskDrawable(@ColorInt color: Int): Drawable {
         return if (bordered) insetRadiusDrawable(hMargin, vMargin, radius, color)
         else InsetDrawable(ColorDrawable(color), hMargin, vMargin, hMargin, vMargin)
@@ -276,6 +291,13 @@ open class TextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.Text) 
             })
         }
     }
+
+    private val normalTextColor = mainText.currentTextColor
+
+    override fun setHighlighted(highlighted: Boolean) {
+        super.setHighlighted(highlighted)
+        mainText.setTextColor(if (highlighted) theme.genericActiveForegroundColor else normalTextColor)
+    }
 }
 
 @SuppressLint("ViewConstructor")
@@ -300,6 +322,15 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
     val altText = createAltTextView(def.altText)
 
     val oppositeAltText = def.oppositeAltText?.let { createAltTextView(it) }
+
+    private val normalAltTextColor = altText.currentTextColor
+
+    override fun setHighlighted(highlighted: Boolean) {
+        super.setHighlighted(highlighted)
+        val color = if (highlighted) theme.genericActiveForegroundColor else normalAltTextColor
+        altText.setTextColor(color)
+        oppositeAltText?.setTextColor(color)
+    }
 
     init {
         appearanceView.apply {

@@ -30,6 +30,10 @@ class TextKeyboard(
     companion object {
         const val Name = "Text"
 
+        private val SelectionKey = AlphabetKey(
+            "S", "*", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.ToggleSelection)
+        )
+
         val Layout: List<List<KeyDef>> = listOf(
             listOf(
                 AlphabetSymbolDigitKey("Q", "[", "1"),
@@ -44,24 +48,24 @@ class TextKeyboard(
                 AlphabetSymbolDigitKey("P", "_", "0")
             ),
             listOf(
-                AlphabetKey("A", "@"),
-                AlphabetKey("S", "*"),
+                AlphabetKey("A", "@", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.SelectAll)),
+                SelectionKey,
                 AlphabetKey("D", "+"),
                 AlphabetKey("F", "-"),
                 AlphabetKey("G", "="),
-                AlphabetKey("H", "/"),
-                AlphabetKey("J", "#"),
-                AlphabetKey("K", "("),
-                AlphabetKey("L", ")")
+                AlphabetKey("H", "/", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Left), oppositeText = "←"),
+                AlphabetKey("J", "#", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Down), oppositeText = "↓"),
+                AlphabetKey("K", "(", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Up), oppositeText = "↑"),
+                AlphabetKey("L", ")", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Right), oppositeText = "→")
             ),
             listOf(
                 CapsKey(),
                 AlphabetKey("Z", "'"),
-                AlphabetKey("X", ":"),
-                AlphabetKey("C", "\""),
-                AlphabetKey("V", "?"),
-                AlphabetKey("B", "!"),
-                AlphabetKey("N", "~"),
+                AlphabetKey("X", ":", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Cut)),
+                AlphabetKey("C", "\"", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Copy)),
+                AlphabetKey("V", "?", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Paste)),
+                AlphabetKey("B", "!", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Home), oppositeText = "|<"),
+                AlphabetKey("N", "~", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.End), oppositeText = ">|"),
                 AlphabetKey("M", "\\"),
                 BackspaceKey()
             ),
@@ -99,6 +103,14 @@ class TextKeyboard(
 
     private val textKeys: List<TextKeyView> by lazy {
         allViews.filterIsInstance(TextKeyView::class.java).toList()
+    }
+
+    private val selectionKey: TextKeyView by lazy {
+        textKeys.first { it.def === SelectionKey.appearance }
+    }
+
+    fun updateSelectionKey(active: Boolean) {
+        selectionKey.setHighlighted(active)
     }
 
     private var capsState: CapsState = CapsState.None

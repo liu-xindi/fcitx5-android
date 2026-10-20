@@ -6,6 +6,7 @@ package org.fcitx.fcitx5.android.input.keyboard
 
 import android.text.InputType
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
@@ -13,14 +14,18 @@ import androidx.core.content.ContextCompat
 import androidx.transition.Slide
 import org.fcitx.fcitx5.android.R
 import org.fcitx.fcitx5.android.core.CapabilityFlags
+import org.fcitx.fcitx5.android.core.FcitxKeyMapping
 import org.fcitx.fcitx5.android.core.InputMethodEntry
+import org.fcitx.fcitx5.android.core.KeySym
 import org.fcitx.fcitx5.android.data.prefs.AppPrefs
 import org.fcitx.fcitx5.android.input.bar.KawaiiBarComponent
 import org.fcitx.fcitx5.android.input.broadcast.InputBroadcastReceiver
+import org.fcitx.fcitx5.android.input.broadcast.PreeditEmptyStateComponent
 import org.fcitx.fcitx5.android.input.broadcast.ReturnKeyDrawableComponent
 import org.fcitx.fcitx5.android.input.dependency.fcitx
 import org.fcitx.fcitx5.android.input.dependency.inputMethodService
 import org.fcitx.fcitx5.android.input.dependency.theme
+import org.fcitx.fcitx5.android.input.keyboard.KeyAction.EditingAction.Op
 import org.fcitx.fcitx5.android.input.picker.PickerWindow
 import org.fcitx.fcitx5.android.input.popup.PopupActionListener
 import org.fcitx.fcitx5.android.input.popup.PopupComponent
@@ -44,6 +49,7 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
     private val popup: PopupComponent by manager.must()
     private val bar: KawaiiBarComponent by manager.must()
     private val returnKeyDrawable: ReturnKeyDrawableComponent by manager.must()
+    private val preeditState: PreeditEmptyStateComponent by manager.must()
 
     companion object : EssentialWindow.Key
 
@@ -76,11 +82,81 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
 
     private val currentKeyboard: BaseKeyboard? get() = keyboards[currentKeyboardName]
 
+    private var hasSelection = false
+    private var selectionMode = false
+
     private val keyActionListener = KeyActionListener { it, source ->
-        if (it is KeyAction.LayoutSwitchAction) {
-            switchLayout(it.act)
-        } else {
-            commonKeyActionListener.listener.onKeyAction(it, source)
+        when (it) {
+            is KeyAction.LayoutSwitchAction -> switchLayout(it.act)
+            is KeyAction.EditingAction -> onEditingAction(it.op)
+            else -> {
+                if (it !is KeyAction.CapsAction) setSelectionMode(false)
+                commonKeyActionListener.listener.onKeyAction(it, source)
+            }
+        }
+    }
+
+    private fun setSelectionMode(active: Boolean) {
+        if (selectionMode == active) return
+        selectionMode = active
+        updateSelectionKey()
+    }
+
+    private fun updateSelectionKey() {
+        (keyboards[TextKeyboard.Name] as TextKeyboard).updateSelectionKey(hasSelection || selectionMode)
+    }
+
+    private fun sendDirectionKey(keyEventCode: Int) {
+        service.sendCombinationKeyEvents(keyEventCode, shift = hasSelection || selectionMode)
+    }
+
+    private fun performContextMenuAction(id: Int) {
+        service.currentInputConnection?.performContextMenuAction(id)
+    }
+
+    private fun onEditingAction(op: Op) {
+        if (!preeditState.isEmpty) {
+            val sym = when (op) {
+                Op.Left -> FcitxKeyMapping.FcitxKey_Left
+                Op.Right -> FcitxKeyMapping.FcitxKey_Right
+                else -> return
+            }
+            commonKeyActionListener.listener.onKeyAction(
+                KeyAction.SymAction(KeySym(sym)), KeyActionListener.Source.Keyboard
+            )
+            return
+        }
+        when (op) {
+            Op.Left -> sendDirectionKey(KeyEvent.KEYCODE_DPAD_LEFT)
+            Op.Down -> sendDirectionKey(KeyEvent.KEYCODE_DPAD_DOWN)
+            Op.Up -> sendDirectionKey(KeyEvent.KEYCODE_DPAD_UP)
+            Op.Right -> sendDirectionKey(KeyEvent.KEYCODE_DPAD_RIGHT)
+            Op.Home -> sendDirectionKey(KeyEvent.KEYCODE_MOVE_HOME)
+            Op.End -> sendDirectionKey(KeyEvent.KEYCODE_MOVE_END)
+            Op.SelectAll -> {
+                setSelectionMode(true)
+                performContextMenuAction(android.R.id.selectAll)
+            }
+            Op.ToggleSelection -> {
+                if (hasSelection) {
+                    setSelectionMode(false)
+                    service.cancelSelection()
+                } else {
+                    setSelectionMode(!selectionMode)
+                }
+            }
+            Op.Cut -> {
+                setSelectionMode(false)
+                performContextMenuAction(android.R.id.cut)
+            }
+            Op.Copy -> {
+                setSelectionMode(false)
+                performContextMenuAction(android.R.id.copy)
+            }
+            Op.Paste -> {
+                setSelectionMode(false)
+                performContextMenuAction(android.R.id.paste)
+            }
         }
     }
 
@@ -139,12 +215,18 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
     }
 
     override fun onStartInput(info: EditorInfo, capFlags: CapabilityFlags) {
+        setSelectionMode(false)
         val targetLayout = when (info.inputType and InputType.TYPE_MASK_CLASS) {
             InputType.TYPE_CLASS_NUMBER -> NumberKeyboard.Name
             InputType.TYPE_CLASS_PHONE -> NumberKeyboard.Name
             else -> TextKeyboard.Name
         }
         switchLayout(targetLayout, remember = false)
+    }
+
+    override fun onSelectionUpdate(start: Int, end: Int) {
+        hasSelection = start != end
+        updateSelectionKey()
     }
 
     override fun onImeUpdate(ime: InputMethodEntry) {
@@ -169,6 +251,7 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
     }
 
     override fun onDetached() {
+        setSelectionMode(false)
         currentKeyboard?.let {
             it.onDetach()
             it.keyActionListener = null
