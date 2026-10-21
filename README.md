@@ -14,6 +14,10 @@
 - 包名：`com.liuxindi.fcitx5`，可与官方版共存，官方版的备份不能直接导入。
 - 插件：官方插件按官方包名查找主程序，无法使用（其中剪贴板过滤插件还要求签名一致）。使用官方插件需要修改包名自行编译。
 
+下载：[Releases](https://github.com/liu-xindi/fcitx5-android/releases)。问题在 [Issues](https://github.com/liu-xindi/fcitx5-android/issues) 反馈。
+
+以下为上游原文。
+
 ## Download
 
 [<img src="https://github.com/rubenpgrady/get-it-on-github/raw/refs/heads/main/get-it-on-github.png" alt="Git it on GitHub" width="207" height="80">](https://github.com/fcitx5-android/fcitx5-android/releases/latest)
