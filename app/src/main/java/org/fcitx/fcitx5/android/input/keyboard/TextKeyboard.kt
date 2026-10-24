@@ -63,8 +63,8 @@ class TextKeyboard(
                 AlphabetKey("Z", "'", oppositeAction = KeyAction.FcitxKeyAction("`"), oppositeText = "`"),
                 AlphabetKey("X", ":", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Cut)),
                 AlphabetKey("C", "\"", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Copy)),
-                AlphabetKey("V", "!", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Paste)),
-                AlphabetKey("B", "?", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Home), oppositeText = "|<"),
+                AlphabetKey("V", "?", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Paste)),
+                AlphabetKey("B", "!", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Home), oppositeText = "|<"),
                 AlphabetKey("N", "$", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.End), oppositeText = ">|"),
                 AlphabetKey("M", "\\"),
                 BackspaceKey()

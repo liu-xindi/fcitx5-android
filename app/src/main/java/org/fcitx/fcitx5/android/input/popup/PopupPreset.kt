@@ -34,8 +34,8 @@ val PopupPreset: Map<String, Array<String>> = hashMapOf(
     "z" to arrayOf("`", "'", "Z", "ž", "ź", "ż"),
     "x" to arrayOf(":", "X", "×"),
     "c" to arrayOf("\"", "C", "ç", "ć", "č"),
-    "v" to arrayOf("!", "V", "¡", "ü", "ǖ", "ǘ", "ǚ", "ǜ"),
-    "b" to arrayOf("?", "B", "¿"),
+    "v" to arrayOf("?", "V", "¿", "ü", "ǖ", "ǘ", "ǚ", "ǜ"),
+    "b" to arrayOf("!", "B", "¡"),
     "n" to arrayOf("$", "N", "ñ", "ń"),
     "m" to arrayOf("\\", "M"),
     //
@@ -63,8 +63,8 @@ val PopupPreset: Map<String, Array<String>> = hashMapOf(
     "Z" to arrayOf("`", "'", "z", "Ž", "Ź", "Ż"),
     "X" to arrayOf(":", "x", "×"),
     "C" to arrayOf("\"", "c", "Ç", "Ć", "Č"),
-    "V" to arrayOf("!", "v", "¡", "Ü", "Ǖ", "Ǘ", "Ǚ", "Ǜ"),
-    "B" to arrayOf("?", "b", "¿"),
+    "V" to arrayOf("?", "v", "¿", "Ü", "Ǖ", "Ǘ", "Ǚ", "Ǜ"),
+    "B" to arrayOf("!", "b", "¡"),
     "N" to arrayOf("$", "n", "Ñ", "Ń"),
     "M" to arrayOf("\\", "m"),
     //
