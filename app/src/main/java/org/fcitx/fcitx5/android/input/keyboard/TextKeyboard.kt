@@ -50,9 +50,9 @@ class TextKeyboard(
             listOf(
                 AlphabetKey("A", "@", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.SelectAll)),
                 SelectionKey,
-                AlphabetKey("D", "+"),
+                AlphabetKey("D", "+", oppositeAction = KeyAction.FcitxKeyAction("^"), oppositeText = "^"),
                 AlphabetKey("F", "-"),
-                AlphabetKey("G", "="),
+                AlphabetKey("G", "=", oppositeAction = KeyAction.FcitxKeyAction("%"), oppositeText = "%"),
                 AlphabetKey("H", "/", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Left), oppositeText = "←"),
                 AlphabetKey("J", "#", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Down), oppositeText = "↓"),
                 AlphabetKey("K", "(", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Up), oppositeText = "↑"),
@@ -60,12 +60,12 @@ class TextKeyboard(
             ),
             listOf(
                 CapsKey(),
-                AlphabetKey("Z", "'"),
+                AlphabetKey("Z", "'", oppositeAction = KeyAction.FcitxKeyAction("`"), oppositeText = "`"),
                 AlphabetKey("X", ":", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Cut)),
                 AlphabetKey("C", "\"", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Copy)),
-                AlphabetKey("V", "?", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Paste)),
-                AlphabetKey("B", "!", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Home), oppositeText = "|<"),
-                AlphabetKey("N", "~", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.End), oppositeText = ">|"),
+                AlphabetKey("V", "!", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Paste)),
+                AlphabetKey("B", "?", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Home), oppositeText = "|<"),
+                AlphabetKey("N", "$", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.End), oppositeText = ">|"),
                 AlphabetKey("M", "\\"),
                 BackspaceKey()
             ),
@@ -74,7 +74,7 @@ class TextKeyboard(
                 CommaKey(0.1f, KeyDef.Appearance.Variant.Alternative),
                 LanguageKey(),
                 SpaceKey(),
-                AltSymbolKey(".", "$", 0.1f, KeyDef.Appearance.Variant.Alternative),
+                AltSymbolKey(".", "~", 0.1f, KeyDef.Appearance.Variant.Alternative),
                 ReturnKey()
             )
         )
@@ -260,6 +260,7 @@ class TextKeyboard(
             if (it is AltTextKeyView) {
                 it.def as KeyDef.Appearance.AltText
                 it.altText.text = transformPunctuation(it.def.altText)
+                it.def.oppositeAltText?.let { text -> it.oppositeAltText?.text = transformPunctuation(text) }
                 if (!it.def.displayText[0].isLetter()) {
                     it.mainText.text = transformPunctuation(it.def.displayText)
                 }

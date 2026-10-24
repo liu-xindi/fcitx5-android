@@ -51,7 +51,7 @@ class AlphabetKey(
         displayText = character,
         altText = punctuation,
         textSize = 23f,
-        oppositeAltText = oppositeText,
+        oppositeAltText = oppositeText ?: oppositeAction?.let { "•" },
         variant = variant
     ),
     setOfNotNull(
@@ -157,7 +157,8 @@ class CapsKey : KeyDef(
         Behavior.Press(KeyAction.CapsAction(false)),
         Behavior.LongPress(KeyAction.CapsAction(true)),
         Behavior.DoubleTap(KeyAction.CapsAction(true)),
-        Behavior.Swipe(KeyAction.CommitAction("    "))
+        Behavior.Swipe(KeyAction.CommitAction("    ")),
+        Behavior.SwipeOpposite(KeyAction.CommitAction("    "))
     )
 )
 
