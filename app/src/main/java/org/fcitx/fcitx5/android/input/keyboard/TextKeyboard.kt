@@ -31,7 +31,7 @@ class TextKeyboard(
         const val Name = "Text"
 
         private val SelectionKey = AlphabetKey(
-            "S", "*", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.ToggleSelection)
+            "S", "*", punctuationText = "∗", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.ToggleSelection)
         )
 
         val Layout: List<List<KeyDef>> = listOf(
@@ -260,7 +260,7 @@ class TextKeyboard(
             if (it is AltTextKeyView) {
                 it.def as KeyDef.Appearance.AltText
                 it.altText.text = transformPunctuation(it.def.altText)
-                it.def.oppositeAltText?.let { text -> it.oppositeAltText?.text = transformPunctuation(text) }
+                it.def.oppositeAltText?.let { text -> it.oppositeAltText.text = transformPunctuation(text) }
                 if (!it.def.displayText[0].isLetter()) {
                     it.mainText.text = transformPunctuation(it.def.displayText)
                 }

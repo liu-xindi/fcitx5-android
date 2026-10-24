@@ -321,7 +321,7 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
 
     val altText = createAltTextView(def.altText)
 
-    val oppositeAltText = def.oppositeAltText?.let { createAltTextView(it) }
+    val oppositeAltText = createAltTextView(def.oppositeAltText ?: "")
 
     private val normalAltTextColor = altText.currentTextColor
 
@@ -329,13 +329,13 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
         super.setHighlighted(highlighted)
         val color = if (highlighted) theme.genericActiveForegroundColor else normalAltTextColor
         altText.setTextColor(color)
-        oppositeAltText?.setTextColor(color)
+        oppositeAltText.setTextColor(color)
     }
 
     init {
         appearanceView.apply {
             add(altText, lParams(wrapContent, wrapContent))
-            oppositeAltText?.let { add(it, lParams(wrapContent, wrapContent)) }
+            add(oppositeAltText, lParams(wrapContent, wrapContent))
         }
         applyLayout(resources.configuration.orientation)
     }
@@ -359,7 +359,7 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             leftToLeft = unset
             rightToRight = parentId; rightMargin = hMargin + dp(4)
         }
-        oppositeAltText?.apply {
+        oppositeAltText.apply {
             visibility = View.VISIBLE
             updateLayoutParams<ConstraintLayout.LayoutParams> {
                 // reset
@@ -377,12 +377,8 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             // reset
             bottomToBottom = unset
             // set
-            if (oppositeAltText != null) {
-                topToTop = unset; topMargin = 0
-                topToBottom = oppositeAltText.existingOrNewId
-            } else {
-                topToTop = parentId; topMargin = vMargin
-            }
+            topToTop = unset; topMargin = 0
+            topToBottom = oppositeAltText.existingOrNewId
             bottomToTop = altText.existingOrNewId
         }
         altText.visibility = View.VISIBLE
@@ -395,7 +391,7 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             rightToRight = parentId
             bottomToBottom = parentId; bottomMargin = vMargin + dp(2)
         }
-        oppositeAltText?.apply {
+        oppositeAltText.apply {
             visibility = View.VISIBLE
             updateLayoutParams<ConstraintLayout.LayoutParams> {
                 // reset
@@ -420,7 +416,7 @@ class AltTextKeyView(ctx: Context, theme: Theme, def: KeyDef.Appearance.AltText)
             bottomToBottom = parentId
         }
         altText.visibility = View.GONE
-        oppositeAltText?.visibility = View.GONE
+        oppositeAltText.visibility = View.GONE
     }
 
     private fun applyLayout(orientation: Int) {

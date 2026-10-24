@@ -42,6 +42,7 @@ class SymbolKey(
 class AlphabetKey(
     val character: String,
     val punctuation: String,
+    punctuationText: String = punctuation,
     variant: Variant = Variant.Normal,
     popup: Array<Popup>? = null,
     oppositeAction: KeyAction? = null,
@@ -49,7 +50,7 @@ class AlphabetKey(
 ) : KeyDef(
     Appearance.AltText(
         displayText = character,
-        altText = punctuation,
+        altText = punctuationText,
         textSize = 23f,
         oppositeAltText = oppositeText ?: oppositeAction?.let { "•" },
         variant = variant
