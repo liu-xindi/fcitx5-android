@@ -168,10 +168,18 @@ class LayoutSwitchKey(
     val to: String = "",
     percentWidth: Float = 0.15f,
     variant: Variant = Variant.Alternative,
-    swipeAction: KeyAction? = null
+    swipeAction: KeyAction? = null,
+    altText: String? = null
 ) : KeyDef(
-    Appearance.Text(
+    if (altText == null) Appearance.Text(
         displayText,
+        textSize = 16f,
+        textStyle = Typeface.BOLD,
+        percentWidth = percentWidth,
+        variant = variant
+    ) else Appearance.AltText(
+        displayText,
+        altText,
         textSize = 16f,
         textStyle = Typeface.BOLD,
         percentWidth = percentWidth,

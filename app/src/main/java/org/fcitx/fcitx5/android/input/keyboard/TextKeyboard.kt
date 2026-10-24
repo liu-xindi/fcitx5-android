@@ -34,7 +34,7 @@ class TextKeyboard(
             "S", "*", punctuationText = "∗", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.ToggleSelection)
         )
 
-        private val CtrlKey = LayoutSwitchKey("?123", swipeAction = KeyAction.CtrlAction)
+        private val CtrlKey = LayoutSwitchKey("?123", swipeAction = KeyAction.CtrlAction, altText = "⌃")
 
         val Layout: List<List<KeyDef>> = listOf(
             listOf(
