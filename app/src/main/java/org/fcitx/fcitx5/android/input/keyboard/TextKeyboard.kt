@@ -34,6 +34,8 @@ class TextKeyboard(
             "S", "*", punctuationText = "∗", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.ToggleSelection)
         )
 
+        private val CtrlKey = LayoutSwitchKey("?123", swipeAction = KeyAction.CtrlAction)
+
         val Layout: List<List<KeyDef>> = listOf(
             listOf(
                 AlphabetSymbolDigitKey("Q", "[", "1"),
@@ -70,7 +72,7 @@ class TextKeyboard(
                 BackspaceKey()
             ),
             listOf(
-                LayoutSwitchKey("?123", ""),
+                CtrlKey,
                 CommaKey(0.1f, KeyDef.Appearance.Variant.Alternative),
                 LanguageKey(),
                 SpaceKey(),
@@ -111,6 +113,14 @@ class TextKeyboard(
 
     fun updateSelectionKey(active: Boolean) {
         selectionKey.setHighlighted(active)
+    }
+
+    private val ctrlKey: TextKeyView by lazy {
+        textKeys.first { it.def === CtrlKey.appearance }
+    }
+
+    fun updateCtrlKey(active: Boolean) {
+        ctrlKey.setHighlighted(active)
     }
 
     private var capsState: CapsState = CapsState.None

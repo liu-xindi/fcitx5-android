@@ -84,16 +84,30 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
 
     private var hasSelection = false
     private var selectionMode = false
+    private var ctrlActive = false
 
     private val keyActionListener = KeyActionListener { it, source ->
         when (it) {
-            is KeyAction.LayoutSwitchAction -> switchLayout(it.act)
+            is KeyAction.CtrlAction -> setCtrlActive(!ctrlActive)
+            is KeyAction.LayoutSwitchAction -> {
+                setCtrlActive(false)
+                switchLayout(it.act)
+            }
             is KeyAction.EditingAction -> onEditingAction(it.op)
             else -> {
-                if (it !is KeyAction.CapsAction) setSelectionMode(false)
+                if (it !is KeyAction.CapsAction) {
+                    setSelectionMode(false)
+                    setCtrlActive(false)
+                }
                 commonKeyActionListener.listener.onKeyAction(it, source)
             }
         }
+    }
+
+    private fun setCtrlActive(active: Boolean) {
+        if (ctrlActive == active) return
+        ctrlActive = active
+        (keyboards[TextKeyboard.Name] as TextKeyboard).updateCtrlKey(active)
     }
 
     private fun setSelectionMode(active: Boolean) {
@@ -107,7 +121,7 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
     }
 
     private fun sendDirectionKey(keyEventCode: Int) {
-        service.sendCombinationKeyEvents(keyEventCode, shift = hasSelection || selectionMode)
+        service.sendCombinationKeyEvents(keyEventCode, ctrl = ctrlActive, shift = hasSelection || selectionMode)
     }
 
     private fun performContextMenuAction(id: Int) {
@@ -216,6 +230,7 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
 
     override fun onStartInput(info: EditorInfo, capFlags: CapabilityFlags) {
         setSelectionMode(false)
+        setCtrlActive(false)
         val targetLayout = when (info.inputType and InputType.TYPE_MASK_CLASS) {
             InputType.TYPE_CLASS_NUMBER -> NumberKeyboard.Name
             InputType.TYPE_CLASS_PHONE -> NumberKeyboard.Name
@@ -252,6 +267,7 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
 
     override fun onDetached() {
         setSelectionMode(false)
+        setCtrlActive(false)
         currentKeyboard?.let {
             it.onDetach()
             it.keyActionListener = null

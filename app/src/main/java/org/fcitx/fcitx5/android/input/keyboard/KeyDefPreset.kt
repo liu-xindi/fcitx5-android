@@ -167,7 +167,8 @@ class LayoutSwitchKey(
     displayText: String,
     val to: String = "",
     percentWidth: Float = 0.15f,
-    variant: Variant = Variant.Alternative
+    variant: Variant = Variant.Alternative,
+    swipeAction: KeyAction? = null
 ) : KeyDef(
     Appearance.Text(
         displayText,
@@ -176,8 +177,10 @@ class LayoutSwitchKey(
         percentWidth = percentWidth,
         variant = variant
     ),
-    setOf(
-        Behavior.Press(KeyAction.LayoutSwitchAction(to))
+    setOfNotNull(
+        Behavior.Press(KeyAction.LayoutSwitchAction(to)),
+        swipeAction?.let { Behavior.Swipe(it) },
+        swipeAction?.let { Behavior.SwipeOpposite(it) }
     )
 )
 
