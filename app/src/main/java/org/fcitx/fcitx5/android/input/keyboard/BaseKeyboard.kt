@@ -13,16 +13,15 @@ import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
-import org.fcitx.fcitx5.android.core.FcitxKeyMapping
 import org.fcitx.fcitx5.android.core.InputMethodEntry
-import org.fcitx.fcitx5.android.core.KeyStates
-import org.fcitx.fcitx5.android.core.KeySym
 import org.fcitx.fcitx5.android.data.InputFeedbacks
 import org.fcitx.fcitx5.android.data.prefs.AppPrefs
 import org.fcitx.fcitx5.android.data.prefs.ManagedPreference
 import org.fcitx.fcitx5.android.data.theme.Theme
 import org.fcitx.fcitx5.android.input.keyboard.CustomGestureView.GestureType
 import org.fcitx.fcitx5.android.input.keyboard.CustomGestureView.OnGestureListener
+import org.fcitx.fcitx5.android.input.keyboard.CustomGestureView.SwipeAxis
+import org.fcitx.fcitx5.android.input.keyboard.KeyAction.EditingAction.Op
 import org.fcitx.fcitx5.android.input.popup.PopupAction
 import org.fcitx.fcitx5.android.input.popup.PopupActionListener
 import splitties.dimensions.dp
@@ -163,15 +162,23 @@ abstract class BaseKeyboard(
                 swipeEnabled = spaceSwipeMoveCursor.getValue()
                 swipeRepeatEnabled = true
                 swipeThresholdX = selectionSwipeThreshold
-                swipeThresholdY = disabledSwipeThreshold
+                swipeThresholdY = selectionSwipeThreshold
+                var lockedAxis: SwipeAxis? = null
                 onGestureListener = OnGestureListener { view, event ->
                     when (event.type) {
-                        GestureType.Move -> when (val count = event.countX) {
-                            0 -> false
-                            else -> {
-                                val sym =
-                                    if (count > 0) FcitxKeyMapping.FcitxKey_Right else FcitxKeyMapping.FcitxKey_Left
-                                val action = KeyAction.SymAction(KeySym(sym), KeyStates.Virtual)
+                        GestureType.Move -> {
+                            if (lockedAxis == null) lockedAxis = when {
+                                event.countX != 0 -> SwipeAxis.X
+                                event.countY != 0 -> SwipeAxis.Y
+                                else -> null
+                            }
+                            val count = if (lockedAxis == SwipeAxis.Y) event.countY else event.countX
+                            if (count == 0) false else {
+                                val op = when (lockedAxis) {
+                                    SwipeAxis.Y -> if (count > 0) Op.Down else Op.Up
+                                    else -> if (count > 0) Op.Right else Op.Left
+                                }
+                                val action = KeyAction.EditingAction(op)
                                 repeat(count.absoluteValue) {
                                     onAction(action)
                                     if (hapticOnRepeat) InputFeedbacks.hapticFeedback(view)
@@ -179,7 +186,10 @@ abstract class BaseKeyboard(
                                 true
                             }
                         }
-                        else -> false
+                        else -> {
+                            lockedAxis = null
+                            false
+                        }
                     }
                 }
             } else if (def is BackspaceKey) {
