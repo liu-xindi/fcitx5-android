@@ -106,10 +106,11 @@ class AltSymbolKey(
     ),
     setOf(
         Behavior.Press(KeyAction.FcitxKeyAction(symbol)),
-        Behavior.Swipe(KeyAction.FcitxKeyAction(alternative))
+        Behavior.Swipe(KeyAction.FcitxKeyAction(alternative)),
+        Behavior.SwipeOpposite(KeyAction.FcitxKeyAction(alternative))
     ),
     arrayOf(
-        Popup.AltPreview(symbol, alternative),
+        Popup.AltPreview(symbol, alternative, alternative),
         Popup.Keyboard.Preset(symbol)
     )
 )
