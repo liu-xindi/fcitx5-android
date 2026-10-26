@@ -171,6 +171,10 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
                 setSelectionMode(false)
                 performContextMenuAction(android.R.id.paste)
             }
+            Op.Undo -> {
+                setSelectionMode(false)
+                service.sendCombinationKeyEvents(KeyEvent.KEYCODE_Z, ctrl = true)
+            }
         }
     }
 

@@ -52,7 +52,7 @@ class TextKeyboard(
             listOf(
                 AlphabetKey("A", "@", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.SelectAll)),
                 SelectionKey,
-                AlphabetKey("D", "+"),
+                AlphabetKey("D", "+", oppositeAction = KeyAction.FcitxKeyAction("`"), oppositeText = "`"),
                 AlphabetKey("F", "-", oppositeAction = KeyAction.FcitxKeyAction("%"), oppositeText = "%"),
                 AlphabetKey("G", "=", oppositeAction = KeyAction.FcitxKeyAction("^"), oppositeText = "^"),
                 AlphabetKey("H", "/", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Left), oppositeText = "←"),
@@ -62,7 +62,7 @@ class TextKeyboard(
             ),
             listOf(
                 CapsKey(),
-                AlphabetKey("Z", "_", oppositeAction = KeyAction.FcitxKeyAction("`"), oppositeText = "`"),
+                AlphabetKey("Z", "_", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Undo)),
                 AlphabetKey("X", "'", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Cut)),
                 AlphabetKey("C", "\"", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Copy)),
                 AlphabetKey("V", "?", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Paste)),

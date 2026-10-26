@@ -22,7 +22,7 @@ sealed class KeyAction {
     data class CommitAction(val text: String) : KeyAction()
 
     data class EditingAction(val op: Op) : KeyAction() {
-        enum class Op { Left, Down, Up, Right, Home, End, SelectAll, ToggleSelection, Cut, Copy, Paste }
+        enum class Op { Left, Down, Up, Right, Home, End, SelectAll, ToggleSelection, Cut, Copy, Paste, Undo }
     }
 
     data class CapsAction(val lock: Boolean) : KeyAction()
