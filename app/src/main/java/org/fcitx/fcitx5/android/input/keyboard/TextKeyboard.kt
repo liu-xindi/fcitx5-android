@@ -67,7 +67,7 @@ class TextKeyboard(
                 AlphabetKey("C", "\"", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Copy)),
                 AlphabetKey("V", "?", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Paste)),
                 AlphabetKey("B", "!", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.Home), oppositeText = "|<"),
-                AlphabetKey("N", "$", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.End), oppositeText = ">|"),
+                AlphabetKey("N", "~", oppositeAction = KeyAction.EditingAction(KeyAction.EditingAction.Op.End), oppositeText = ">|"),
                 AlphabetKey("M", "\\"),
                 BackspaceKey()
             ),
@@ -76,7 +76,7 @@ class TextKeyboard(
                 CommaKey(0.1f, KeyDef.Appearance.Variant.Alternative),
                 LanguageKey(),
                 SpaceKey(),
-                AltSymbolKey(".", "~", 0.1f, KeyDef.Appearance.Variant.Alternative),
+                AltSymbolKey(".", "$", 0.1f, KeyDef.Appearance.Variant.Alternative),
                 ReturnKey()
             )
         )
