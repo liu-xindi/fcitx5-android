@@ -32,6 +32,7 @@ import org.fcitx.fcitx5.android.input.popup.PopupComponent
 import org.fcitx.fcitx5.android.input.wm.EssentialWindow
 import org.fcitx.fcitx5.android.input.wm.InputWindow
 import org.fcitx.fcitx5.android.input.wm.InputWindowManager
+import org.fcitx.fcitx5.android.utils.clipboardManager
 import org.mechdancer.dependency.manager.must
 import splitties.views.dsl.core.add
 import splitties.views.dsl.core.frameLayout
@@ -169,7 +170,11 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
             }
             Op.Paste -> {
                 setSelectionMode(false)
-                performContextMenuAction(android.R.id.paste)
+                val clip = context.clipboardManager.primaryClip
+                if (clip != null && clip.itemCount > 0) {
+                    val text = clip.getItemAt(0).coerceToText(context)
+                    if (text.isNotEmpty()) service.commitText(text.toString())
+                }
             }
             Op.Undo -> {
                 setSelectionMode(false)
